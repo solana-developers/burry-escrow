@@ -3,27 +3,28 @@ use crate::state::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::clock::Clock;
 use std::str::FromStr;
-use switchboard_solana::AggregatorAccountData;
+use switchboard_v2::AggregatorAccountData;
 
 pub fn withdraw_handler(ctx: Context<Withdraw>) -> Result<()> {
     let feed = &ctx.accounts.feed_aggregator.load()?;
     let escrow = &ctx.accounts.escrow_account;
 
-    // get result
-    let val: u64 = feed.get_result()?.try_into()?;
+    if !escrow.out_of_jail {
+        // get result
+        let val: u64 = feed.get_result()?.try_into()?;
 
-    // check whether the feed has been updated in the last 300 seconds
-    feed.check_staleness(Clock::get().unwrap().unix_timestamp, 300)
-        .map_err(|_| error!(EscrowErrorCode::StaleFeed))?;
+        // check whether the feed has been updated in the last 300 seconds
+        feed.check_staleness(Clock::get().unwrap().unix_timestamp, 300)
+            .map_err(|_| error!(EscrowErrorCode::StaleFeed))?;
 
-    msg!("Current feed result is {}!", val);
-    msg!("Unlock price is {}", escrow.unlock_price);
+        msg!("Current feed result is {}!", val);
+        msg!("Unlock price is {}", escrow.unlock_price);
 
-    //ensure the feed value is below the unlock price
-    if val < escrow.unlock_price {
-        return Err(EscrowErrorCode::SolPriceAboveUnlockPrice.into());
+        //ensure the feed value is below the unlock price
+        if val < escrow.unlock_price {
+            return Err(EscrowErrorCode::SolPriceAboveUnlockPrice.into());
+        }
     }
-
     // 'Transfer: `from` must not carry data'
     **escrow.to_account_info().try_borrow_mut_lamports()? = escrow
         .to_account_info()

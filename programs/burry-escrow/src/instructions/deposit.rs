@@ -8,7 +8,7 @@ pub fn deposit_handler(ctx: Context<Deposit>, escrow_amount: u64, unlock_price: 
     let escrow = &mut ctx.accounts.escrow_account;
     escrow.unlock_price = unlock_price;
     escrow.escrow_amount = escrow_amount;
-
+    escrow.out_of_jail = false;
     let transfer_instruction = transfer(&ctx.accounts.user.key(), &escrow.key(), escrow_amount);
 
     invoke(
