@@ -86,6 +86,7 @@ describe.only("burry-escrow-vrf", () => {
   it("Create Burry Escrow Above Price", async () => {
     // fetch switchboard devnet program object
     const switchboardProgram = await SwitchboardProgram.load(
+      "devnet",
       new anchor.web3.Connection("https://api.devnet.solana.com"),
       payer
     );
@@ -182,7 +183,7 @@ describe.only("burry-escrow-vrf", () => {
 
   it("Roll till you can withdraw", async () => {
     // derive escrow address
-    const [Escrow] =  anchor.web3.PublicKey.findProgramAddressSync(
+    const [Escrow] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("MICHAEL BURRY"), payer.publicKey.toBuffer()],
       program.programId
     );
@@ -259,8 +260,9 @@ describe.only("burry-escrow-vrf", () => {
       assert.fail();
     }
 
-    let rolledDoubles = false;
-    while (!rolledDoubles) {
+    // SOLUTION EDIT: Renamed from rolledDoubles to outOfJail
+    let outOfJail = false;
+    while (!outOfJail) {
       try {
         // Request randomness and roll dice
         const transaction = await program.methods
@@ -311,8 +313,13 @@ describe.only("burry-escrow-vrf", () => {
           "Die 2:",
           vrfState.dieResult2
         );
-        if (vrfState.dieResult1 == vrfState.dieResult2) {
-          rolledDoubles = true;
+
+        // SOLUTION EDIT: Checked for 3 rolls.
+        if (vrfState.rollCount >= 3) {
+          console.log("Rolled 3 times, out of jail!");
+          outOfJail = true;
+        } else if (vrfState.dieResult1 == vrfState.dieResult2) {
+          outOfJail = true;
         } else {
           console.log("Resetting die...");
           await delay(5000);

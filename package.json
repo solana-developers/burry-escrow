@@ -5,9 +5,10 @@
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
   "dependencies": {
-    "@coral-xyz/anchor": "^0.30.1",
+ "@coral-xyz/anchor": "^0.28.0",
     "@switchboard-xyz/common": "^2.4.7",
-    "@switchboard-xyz/solana.js": "^3.2.5"
+    "@switchboard-xyz/oracle": "^2.1.13",
+    "@switchboard-xyz/solana.js": "^2.8.4"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
@@ -21,3 +22,4 @@
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
+

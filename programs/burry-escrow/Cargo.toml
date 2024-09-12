@@ -18,4 +18,4 @@ no-log-ix-name = []
 [dependencies]
 anchor-lang = "0.28.0"
 anchor-spl = "0.28.0"
-switchboard-v2 = "0.4.0"
+switchboard-solana = "0.28"

@@ -2,7 +2,7 @@ use crate::errors::*;
 use crate::state::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::clock::Clock;
-use switchboard_v2::VrfAccountData;
+use switchboard_solana::VrfAccountData;
 
 #[derive(Accounts)]
 pub struct ConsumeRandomness<'info> {
@@ -56,6 +56,13 @@ pub fn consume_randomness_handler(ctx: Context<ConsumeRandomness>) -> Result<()>
         msg!("Rolled doubles, get out of jail free!");
         let escrow = &mut ctx.accounts.escrow_account;
         escrow.out_of_jail = true;
+    }
+     // SOLUTION EDIT: Ticked up roll count and checked if over 3
+    vrf_state.roll_count = vrf_state.roll_count.saturating_add(1);
+    if vrf_state.roll_count >= 3 {
+        msg!("Three rolls and you're out of jail!");
+        let escrow_state = &mut ctx.accounts.escrow_account;
+        escrow_state.out_of_jail = true;
     }
 
     Ok(())

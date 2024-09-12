@@ -23,6 +23,7 @@ describe("burry-escrow", () => {
   it("Create Burry Escrow Below Price", async () => {
     // fetch switchboard devnet program object
     const switchboardProgram = await SwitchboardProgram.load(
+      "devnet",
       new anchor.web3.Connection("https://api.devnet.solana.com"),
       payer
     );
