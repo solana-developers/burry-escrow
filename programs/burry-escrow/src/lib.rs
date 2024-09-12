@@ -9,7 +9,7 @@ pub mod errors;
 pub mod instructions;
 pub mod state;
 
-declare_id!("6AFoKauSJFmHKXhgFxB3itbBe74jLBLLoUBV8MTndrfP");
+declare_id!("Hq8Voag9XX8odwYiCHAf4Qn1pMuMWqWys2ney1h8yQxe");
 
 #[program]
 pub mod burry_escrow {
