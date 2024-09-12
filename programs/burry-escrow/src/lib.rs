@@ -1,23 +1,39 @@
 use anchor_lang::prelude::*;
 use instructions::deposit::*;
 use instructions::withdraw::*;
-use state::*;
+use instructions::init_vrf_client::*;
+use instructions::get_out_of_jail::*;
+use instructions::consume_randomness::*;
 
 pub mod errors;
 pub mod instructions;
 pub mod state;
 
-declare_id!("9Wm9QwzaAdKHz6Pt2jQ6bLG4ssjXnwvcXqiaWvcCSLkQ");
+declare_id!("Hq8Voag9XX8odwYiCHAf4Qn1pMuMWqWys2ney1h8yQxe");
 
 #[program]
 pub mod burry_escrow {
+
+    use crate::instructions::init_vrf_client::init_vrf_client_handler;
+
     use super::*;
 
-    pub fn deposit(ctx: Context<Deposit>, escrow_amt: u64, unlock_price: f64) -> Result<()> {
-        deposit_handler(ctx, escrow_amt, unlock_price)
+    pub fn deposit(ctx: Context<Deposit>, escrow_amount: u64, unlock_price: u64) -> Result<()> {
+        deposit_handler(ctx, escrow_amount, unlock_price)
     }
 
     pub fn withdraw(ctx: Context<Withdraw>) -> Result<()> {
         withdraw_handler(ctx)
+    }
+    pub fn init_vrf_client(ctx: Context<InitVrfClient>) -> Result<()>{
+        init_vrf_client_handler(ctx)
+    }
+ 
+		pub fn get_out_of_jail(ctx: Context<RequestRandomness>, params: RequestRandomnessParams) -> Result<()>{
+        get_out_of_jail_handler(ctx, params)
+    }
+ 
+    pub fn consume_randomness(ctx: Context<ConsumeRandomness>) -> Result<()>{
+        consume_randomness_handler(ctx)
     }
 }
