@@ -1,6 +1,7 @@
 [toolchain]
 
 [features]
+seeds = false 
 resolution = true
 skip-lint = false
 

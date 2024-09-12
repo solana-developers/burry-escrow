@@ -1,7 +1,7 @@
 use crate::errors::*;
 use crate::state::*;
 use anchor_lang::prelude::*;
-use switchboard_v2::VrfAccountData;
+use switchboard_solana::VrfAccountData;
 
 pub const ANCHOR_DISCRIMINATOR: usize = 8;
 

@@ -2,8 +2,7 @@ use crate::errors::*;
 use crate::state::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::clock::Clock;
-use switchboard_v2::VrfAccountData;
-
+use switchboard_solana::VrfAccountData;
 #[derive(Accounts)]
 pub struct ConsumeRandomness<'info> {
     // burry escrow account

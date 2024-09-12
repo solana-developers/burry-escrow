@@ -3,7 +3,7 @@ use crate::state::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::sysvar::*;
 use anchor_spl::token::{Token, TokenAccount};
-use switchboard_v2::{
+use switchboard_solana::{
     OracleQueueAccountData, PermissionAccountData, SbState, VrfAccountData, VrfRequestRandomness,
 };
 

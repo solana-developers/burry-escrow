@@ -86,6 +86,7 @@ describe.only("burry-escrow-vrf", () => {
   it("Create Burry Escrow Above Price", async () => {
     // fetch switchboard devnet program object
     const switchboardProgram = await SwitchboardProgram.load(
+      "devnet",
       new anchor.web3.Connection("https://api.devnet.solana.com"),
       payer
     );
@@ -131,15 +132,15 @@ describe.only("burry-escrow-vrf", () => {
         Escrow,
         "confirmed"
       );
-      console.log("On-chain unlock price:", newAccount.unlockPrice);
+      console.log("Onchain unlock price:", newAccount.unlockPrice.toString());
       console.log("Amount in escrow:", escrowBalance);
 
       // Check whether the data on-chain is equal to local 'data'
       assert(failUnlockPrice.eq(newAccount.unlockPrice));
       assert(escrowBalance > 0);
-    } catch (e) {
-      console.log(e);
-      assert.fail(e);
+    } catch (error) {
+      console.log(error);
+      assert.fail(error);
     }
   });
 
@@ -167,14 +168,15 @@ describe.only("burry-escrow-vrf", () => {
 
       await provider.connection.confirmTransaction(transaction, "confirmed");
       console.log("Your transaction signature", transaction);
-    } catch (e) {
+    } catch (error) {
       // verify transaction returns expected error
       didFail = true;
-      console.log(e.error.errorMessage);
-      assert(
-        e.error.errorMessage ==
-          "Current SOL price is not above Escrow unlock price."
-      );
+       assert(
+         error.message.includes(
+           "Current SOL price is not above Escrow unlock price."
+         ),
+         "Unexpected error message: " + error.message
+       );
     }
 
     assert(didFail);
@@ -254,8 +256,8 @@ describe.only("burry-escrow-vrf", () => {
         })
         .signers([payer])
         .rpc();
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(error);
       assert.fail();
     }
 
@@ -317,8 +319,8 @@ describe.only("burry-escrow-vrf", () => {
           console.log("Resetting die...");
           await delay(5000);
         }
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log(error);
         assert.fail();
       }
     }
