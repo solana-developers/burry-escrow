@@ -11,4 +11,6 @@ pub enum EscrowErrorCode {
     ConfidenceIntervalExceeded,
     #[msg("Current SOL price is not above Escrow unlock price.")]
     SolPriceAboveUnlockPrice,
+    #[msg("Switchboard VRF Account's authority should be set to the client's state pubkey")]
+    InvalidVrfAuthorityError,
 }

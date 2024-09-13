@@ -7,27 +7,29 @@ use switchboard_solana::AggregatorAccountData;
 
 pub fn withdraw_handler(ctx: Context<Withdraw>) -> Result<()> {
     let feed = &ctx.accounts.feed_aggregator.load()?;
-    let escrow_state = &ctx.accounts.escrow_account;
+    let escrow = &ctx.accounts.escrow_account;
 
-    // get result
-    let val: f64 = feed.get_result()?.try_into()?;
+    if !escrow.out_of_jail {
+        // get result
+        let val: u64 = feed.get_result()?.try_into()?;
 
-    // check whether the feed has been updated in the last 300 seconds
-    feed.check_staleness(Clock::get().unwrap().unix_timestamp, 300)
-        .map_err(|_| error!(EscrowErrorCode::StaleFeed))?;
+        // check whether the feed has been updated in the last 300 seconds
+        feed.check_staleness(Clock::get().unwrap().unix_timestamp, 300)
+            .map_err(|_| error!(EscrowErrorCode::StaleFeed))?;
 
-    msg!("Current feed result is {}!", val);
-    msg!("Unlock price is {}", escrow_state.unlock_price);
+        msg!("Current feed result is {}!", val);
+        msg!("Unlock price is {}", escrow.unlock_price);
 
-    if val < escrow_state.unlock_price as f64 {
-        return Err(EscrowErrorCode::SolPriceAboveUnlockPrice.into());
+        //ensure the feed value is below the unlock price
+        if val < escrow.unlock_price {
+            return Err(EscrowErrorCode::SolPriceAboveUnlockPrice.into());
+        }
     }
-
     // 'Transfer: `from` must not carry data'
-    **escrow_state.to_account_info().try_borrow_mut_lamports()? = escrow_state
+    **escrow.to_account_info().try_borrow_mut_lamports()? = escrow
         .to_account_info()
         .lamports()
-        .checked_sub(escrow_state.escrow_amount)
+        .checked_sub(escrow.escrow_amount)
         .ok_or(ProgramError::InvalidArgument)?;
 
     **ctx
@@ -39,7 +41,7 @@ pub fn withdraw_handler(ctx: Context<Withdraw>) -> Result<()> {
         .user
         .to_account_info()
         .lamports()
-        .checked_add(escrow_state.escrow_amount)
+        .checked_add(escrow.escrow_amount)
         .ok_or(ProgramError::InvalidArgument)?;
 
     Ok(())
@@ -57,7 +59,7 @@ pub struct Withdraw<'info> {
         bump,
         close = user
     )]
-    pub escrow_account: Account<'info, EscrowState>,
+    pub escrow_account: Account<'info, Escrow>,
     // Switchboard SOL feed aggregator
     #[account(
         address = Pubkey::from_str(SOL_USDC_FEED).unwrap()

@@ -2,17 +2,17 @@ use crate::state::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{program::invoke, system_instruction::transfer};
 
-pub fn deposit_handler(ctx: Context<Deposit>, escrow_amount: u64, unlock_price: f64) -> Result<()> {
+pub fn deposit_handler(ctx: Context<Deposit>, escrow_amount: u64, unlock_price: u64) -> Result<()> {
     msg!("Depositing funds in escrow...");
 
-    let escrow_state = &mut ctx.accounts.escrow_account;
-    escrow_state.unlock_price = unlock_price;
-    escrow_state.escrow_amount = escrow_amount;
-
-    let transfer_ix = transfer(&ctx.accounts.user.key(), &escrow_state.key(), escrow_amount);
+    let escrow = &mut ctx.accounts.escrow_account;
+    escrow.unlock_price = unlock_price;
+    escrow.escrow_amount = escrow_amount;
+    escrow.out_of_jail = false;
+    let transfer_instruction = transfer(&ctx.accounts.user.key(), &escrow.key(), escrow_amount);
 
     invoke(
-        &transfer_ix,
+        &transfer_instruction,
         &[
             ctx.accounts.user.to_account_info(),
             ctx.accounts.escrow_account.to_account_info(),
@@ -28,6 +28,7 @@ pub fn deposit_handler(ctx: Context<Deposit>, escrow_amount: u64, unlock_price: 
     Ok(())
 }
 
+pub const ANCHOR_DISCRIMINATOR: usize = 8;
 #[derive(Accounts)]
 pub struct Deposit<'info> {
     // user account
@@ -39,9 +40,9 @@ pub struct Deposit<'info> {
         seeds = [ESCROW_SEED, user.key().as_ref()],
         bump,
         payer = user,
-        space = std::mem::size_of::<EscrowState>() + 8
+        space = Escrow::INIT_SPACE + ANCHOR_DISCRIMINATOR
     )]
-    pub escrow_account: Account<'info, EscrowState>,
+    pub escrow_account: Account<'info, Escrow>,
 
     pub system_program: Program<'info, System>,
 }
