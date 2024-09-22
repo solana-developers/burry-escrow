@@ -100,6 +100,10 @@ describe("burry-escrow", () => {
       program.programId
     );
 
+    const userBalanceBefore = await provider.connection.getBalance(
+      payer.publicKey
+    );
+
     try {
       const transaction = await program.methods
         .withdraw()
@@ -118,12 +122,26 @@ describe("burry-escrow", () => {
         CONFIRMATION_COMMITMENT
       );
 
+      // Verify escrow account is closed
       try {
         await program.account.escrow.fetch(escrow);
         assert.fail("Escrow account should have been closed");
       } catch (error) {
-        // Expected error, account should be closed
+        console.log(error);
+        assert(
+          error.message.includes("Account does not exist"),
+          "Unexpected error: " + error.message
+        );
       }
+
+      // Verify user balance increased
+      const userBalanceAfter = await provider.connection.getBalance(
+        payer.publicKey
+      );
+      assert(
+        userBalanceAfter > userBalanceBefore,
+        "User balance should have increased"
+      );
     } catch (error) {
       throw new Error(`Failed to withdraw from escrow: ${error.message}`);
     }
