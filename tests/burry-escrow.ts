@@ -8,7 +8,7 @@ import {
   SwitchboardProgram,
 } from "@switchboard-xyz/solana.js";
 import { PublicKey, SystemProgram, Connection } from "@solana/web3.js";
-import { assert, expect } from "chai";
+import { assert } from "chai";
 import { confirmTransaction } from "@solana-developers/helpers";
 
 const SOL_USD_SWITCHBOARD_FEED = new PublicKey(
