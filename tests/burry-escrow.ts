@@ -9,9 +9,7 @@ import {
 } from "@switchboard-xyz/solana.js";
 import { PublicKey, SystemProgram, Connection } from "@solana/web3.js";
 import { assert, expect } from "chai";
-import {
-  confirmTransaction,
-} from "@solana-developers/helpers";
+import { confirmTransaction } from "@solana-developers/helpers";
 
 const SOL_USD_SWITCHBOARD_FEED = new PublicKey(
   "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR"
@@ -80,7 +78,6 @@ describe("burry-escrow", () => {
 
       assert(unlockPrice === escrowAccount.unlockPrice);
       assert(escrowBalance > 0);
-
     } catch (error) {
       console.error("Error details:", error);
       throw new Error(`Failed to create escrow: ${error.message}`);
