@@ -10,7 +10,6 @@ import {
 import { PublicKey, SystemProgram, Connection } from "@solana/web3.js";
 import { assert, expect } from "chai";
 import {
-  getExplorerLink,
   confirmTransaction,
 } from "@solana-developers/helpers";
 
@@ -82,10 +81,6 @@ describe("burry-escrow", () => {
       assert(unlockPrice === escrowAccount.unlockPrice);
       assert(escrowBalance > 0);
 
-      console.log(
-        "Transaction Explorer Link:",
-        getExplorerLink("transaction", transaction, "devnet")
-      );
     } catch (error) {
       console.error("Error details:", error);
       throw new Error(`Failed to create escrow: ${error.message}`);
@@ -132,11 +127,6 @@ describe("burry-escrow", () => {
       } catch (error) {
         // Expected error, account should be closed
       }
-
-      console.log(
-        "Transaction Explorer Link:",
-        getExplorerLink("transaction", transaction, "devnet")
-      );
     } catch (error) {
       throw new Error(`Failed to withdraw from escrow: ${error.message}`);
     }
