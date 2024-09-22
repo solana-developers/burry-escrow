@@ -127,7 +127,7 @@ describe("burry-escrow", () => {
         await program.account.escrow.fetch(escrow);
         assert.fail("Escrow account should have been closed");
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
         assert(
           error.message.includes("Account does not exist"),
           "Unexpected error: " + error.message
