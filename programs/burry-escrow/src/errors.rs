@@ -10,5 +10,5 @@ pub enum EscrowErrorCode {
     #[msg("Switchboard feed exceeded provided confidence interval")]
     ConfidenceIntervalExceeded,
     #[msg("Current SOL price is not above Escrow unlock price.")]
-    SolPriceAboveUnlockPrice,
+    SolPriceBelowUnlockPrice,
 }
