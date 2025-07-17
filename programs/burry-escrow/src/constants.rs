@@ -1,3 +1,5 @@
-pub const DISCRIMINATOR_SIZE: usize = 8;
-pub const ESCROW_SEED: &[u8] = b"MICHAEL BURRY";
-pub const SOL_USDC_FEED: &str = "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR";
+use anchor_lang::prelude::*;
+
+#[constant]
+pub const ESCROW_SEED: &[u8] = b"escrow";
+pub const SOL_USD_FEED: Pubkey = pubkey!("5mXfTYitRFsWPhdJfp2fc8N6hK8cw6NB5jAYpronQasj");

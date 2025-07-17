@@ -1,10 +1,10 @@
 use anchor_lang::prelude::*;
-use instructions::{deposit::*, withdraw::*};
+use instructions::*;
 
+pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
-pub mod constants;
 
 declare_id!("DDFpiq1hQUmXPr6RvnYw4srpRjeDzGjkVNBZdr4oNfSw");
 
@@ -12,11 +12,19 @@ declare_id!("DDFpiq1hQUmXPr6RvnYw4srpRjeDzGjkVNBZdr4oNfSw");
 pub mod burry_escrow {
     use super::*;
 
-    pub fn deposit(ctx: Context<Deposit>, escrow_amount: u64, unlock_price: f64) -> Result<()> {
-        deposit_handler(ctx, escrow_amount, unlock_price)
+    pub fn deposit(ctx: Context<Deposit>, args: DepositArgs) -> Result<()> {
+        Deposit::handler(ctx, args)
     }
 
     pub fn withdraw(ctx: Context<Withdraw>) -> Result<()> {
-        withdraw_handler(ctx)
+        Withdraw::handler(ctx)
+    }
+
+    pub fn commit_randomness(ctx: Context<CommitRandomness>) -> Result<()> {
+        CommitRandomness::handler(ctx)
+    }
+
+    pub fn reveal_randomness(ctx: Context<RevealRandomness>) -> Result<()> {
+        RevealRandomness::handler(ctx)
     }
 }
